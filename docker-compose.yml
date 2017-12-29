@@ -1,0 +1,72 @@
+# docker-compose up -d
+version: '3'
+services:
+  srv0:
+    image: maven/mymaven:1
+    container_name: srv0
+    command: mvn exec:java
+    volumes:
+      - ./pom.xml:/usr/src/mymaven/pom.xml
+      - ./target:/usr/src/mymaven/target
+      - ~/.m2:/root/.m2
+    ports:
+      - 8095:8095
+      - 8094
+    environment:
+      - ENV_MULTICAST_ADDR=230.0.0.0
+      - ENV_MULTICAST_PORT=8094
+      - ENV_CONSOLE_PORT=8095
+      - ENV_SEED_ADDR=srv0
+    networks:
+      - servlets
+
+###############################
+  srv1:
+    image: maven/mymaven:1
+    container_name: srv1
+    command: mvn exec:java
+    volumes:
+      - ./pom.xml:/usr/src/mymaven/pom.xml
+      - ./target:/usr/src/mymaven/target
+      - ~/.m2:/root/.m2
+    ports:
+      - 8094
+    environment:
+      - ENV_MULTICAST_ADDR=230.0.0.0
+      - ENV_MULTICAST_PORT=8094
+      - ENV_CONSOLE_PORT=8095
+      - ENV_SEED_ADDR=srv0
+    networks:
+      - servlets
+
+###############################
+  srv2:
+    image: maven/mymaven:1
+    container_name: srv2
+    command: mvn exec:java
+    volumes:
+      - ./pom.xml:/usr/src/mymaven/pom.xml
+      - ./target:/usr/src/mymaven/target
+      - ~/.m2:/root/.m2
+    ports:
+      - 8094
+    environment:
+      - ENV_MULTICAST_ADDR=230.0.0.0
+      - ENV_MULTICAST_PORT=8094
+      - ENV_CONSOLE_PORT=8095
+      - ENV_SEED_ADDR=srv0
+    networks:
+      - servlets
+
+##############################
+  portainer:
+    container_name: portainer
+    image: portainer/portainer
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    ports:
+      - 9000:9000
+
+
+networks:
+  servlets:

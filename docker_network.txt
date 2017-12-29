@@ -1,0 +1,3 @@
+docker network inspect cassandra_default
+docker network ls
+
